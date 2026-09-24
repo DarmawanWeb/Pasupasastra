@@ -1,0 +1,39 @@
+\chapter{Analitik AI}
+\section{Deteksi multi-model}
+Setiap stream dapat menjalankan beberapa model YOLO bersamaan. Per model:
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Parameter & Arti \\ \midrule
+Kunci & Nama pendek unik; hitungan memakai \code{kunci:kelas}. \\
+Ambang keyakinan & Deteksi di bawah nilai ini diabaikan. \\
+Tiap N frame & Model dijalankan setiap N frame; di antaranya hasil terakhir dipakai. \\
+Filter kelas & Hanya kelas terpilih yang ditampilkan dan dihitung. \\
+Warna & Warna kotak di video beranotasi. \\
+\bottomrule
+\end{tabularx}
+
+\section{Hitungan grup dan prompt}
+Berkas \code{infra/\allowbreak{}worker/\allowbreak{}prompts.\allowbreak{}toml} dimuat ulang otomatis saat disimpan.
+\begin{lstlisting}
+[count_groups]
+orang = ["pedestrian", "people", "person"]
+kendaraan = ["car", "van", "truck", "bus", "motor"]
+
+[prompts]
+crowd = "{orang} people and {kendaraan} vehicles found. What are the people doing?"
+
+[moondream]
+active = ["caption", "crowd"]     # bergiliran tiap siklus
+interval_sec = 1.0
+
+[translate]
+model = "llama3.2:3b"             # caption diterjemahkan ke Bahasa Indonesia
+\end{lstlisting}
+Entri \code{"kelas"} mencocokkan kelas itu di semua model; \code{"kunci:kelas"} hanya di satu model. Placeholder prompt: nama grup, \code{\{counts\}}, \code{\{time\}}.
+
+\section{Caption dan tanya-jawab visual}
+Caption Moondream hanya berjalan untuk stream yang sedang dibuka di mode fokus (hemat GPU). Tanya-jawab visual memakai \code{GCS\_VLM\_MODEL}: \code{moondream} (cepat, Inggris, diterjemahkan bila \code{GCS\_\allowbreak{}TRANSLATE\_\allowbreak{}MODEL} diisi) atau VLM multibahasa seperti \code{qwen2.5vl:3b} yang menjawab langsung dalam Bahasa Indonesia.
+
+\section{Speech-to-text}
+Mikrofon di panel tanya-jawab memakai faster-whisper di server (model \code{small}, CPU). Bila tidak terpasang, konsol memakai pengenal suara browser.

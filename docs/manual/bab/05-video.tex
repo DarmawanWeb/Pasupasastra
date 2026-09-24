@@ -1,0 +1,20 @@
+\chapter{Video dan kamera}
+\section{Mengirim video}
+Semua sumber RTMP mengirim ke \code{rtmp:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}1935/\allowbreak{}<jalur>}. Jalur pada URL menjadi nama stream di MediaMTX.
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Sumber & Pengaturan \\ \midrule
+DJI M4T & Dari bridge DJI: \code{rtmp:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}1935/\allowbreak{}m4t} \\
+LITO X1, SIYI & Isi RTMP di aplikasi vendor: \code{rtmp:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}1935/\allowbreak{}live/\allowbreak{}litox1} \\
+Ponsel sebagai CCTV & Aplikasi siaran RTMP apa pun: \code{rtmp:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}1935/\allowbreak{}live/\allowbreak{}cctv1} \\
+Kamera IP & RTSP/HLS milik kamera; MediaMTX menariknya otomatis. \\
+\bottomrule
+\end{tabularx}
+
+\section{Mendaftarkan sumber}
+Kamera drone didaftarkan sebagai \emph{sumber video} di form drone. Kamera tetap didaftarkan di halaman \ui{Kamera} (nama, protokol, URL, koordinat opsional agar tampil di peta).
+
+Status \emph{Siaran aktif} muncul setelah MediaMTX menerima gambar. Video ditonton lewat WebRTC dengan latensi rendah di LAN.
+\section{Video beranotasi}
+Bila stream diberi model deteksi, worker menerbitkan video dengan kotak deteksi, hitungan grup, dan caption ke jalur \code{ai/<jalur>}. Konsol otomatis beralih ke versi beranotasi saat tersedia; jika tidak, kotak digambar di browser.

@@ -1,0 +1,86 @@
+% PASUPATASTRA — Manual Pengguna. Build: latexmk -xelatex manual.tex
+\documentclass[11pt,a4paper,oneside]{report}
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}[Scale=0.92]
+\setmonofont{DejaVu Sans Mono}[Scale=0.82]
+\usepackage[a4paper,margin=2.3cm,headheight=15pt]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{graphicx,booktabs,tabularx,longtable,array,enumitem,titlesec,fancyhdr,listings,tikz,pgfplots}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usetikzlibrary{arrows.meta,positioning,fit,calc}
+\pgfplotsset{compat=1.18}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\sloppy
+
+\definecolor{navy}{HTML}{0E1624}
+\definecolor{ink}{HTML}{14213D}
+\definecolor{body}{HTML}{4A5568}
+\definecolor{teal}{HTML}{0F6E77}
+\definecolor{cyan}{HTML}{39D0D8}
+\definecolor{warn}{HTML}{B45309}
+\definecolor{danger}{HTML}{B42318}
+\definecolor{paper}{HTML}{F3F4EF}
+\definecolor{demo}{HTML}{7C5CD6}
+
+\titleformat{\chapter}[display]{\color{ink}\bfseries\Huge}{\color{teal}\large BAB \thechapter}{4pt}{}[\vspace{2pt}{\color{cyan}\rule{3cm}{3pt}}]
+\titlespacing*{\chapter}{0pt}{0pt}{18pt}
+\titleformat{\section}{\color{ink}\bfseries\Large}{\color{teal}\thesection}{8pt}{}
+\titleformat{\subsection}{\color{ink}\bfseries\large}{\color{teal}\thesubsection}{8pt}{}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\color{body}PASUPATASTRA · Manual Pengguna}
+\fancyhead[R]{\small\color{body}\leftmark}
+\fancyfoot[C]{\small\color{body}\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\color{body}\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+\lstset{basicstyle=\ttfamily\small,backgroundcolor=\color{paper},frame=single,rulecolor=\color{paper!80!black},
+  breaklines=true,breakatwhitespace=false,columns=flexible,keepspaces=true,postbreak=\mbox{\textcolor{teal}{$\hookrightarrow$}\space},showstringspaces=false,xleftmargin=4pt,xrightmargin=4pt,
+  aboveskip=6pt,belowskip=6pt,literate={→}{{$\rightarrow$}}1 {–}{{--}}1}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\ui}[1]{\textbf{\color{ink}#1}}
+
+\newtcolorbox{catatan}[1][Catatan]{colback=teal!6,colframe=teal,fonttitle=\bfseries,title=#1,boxrule=0.6pt,arc=2pt}
+\newtcolorbox{peringatan}[1][Peringatan keselamatan]{colback=warn!7,colframe=warn,fonttitle=\bfseries,title=#1,boxrule=0.6pt,arc=2pt}
+\newtcolorbox{bahaya}[1][Bahaya]{colback=danger!6,colframe=danger,fonttitle=\bfseries,title=#1,boxrule=0.8pt,arc=2pt}
+
+\renewcommand{\chaptername}{Bab}
+\renewcommand{\contentsname}{Daftar Isi}
+\renewcommand{\appendixname}{Lampiran}
+\renewcommand{\figurename}{Gambar}
+\renewcommand{\tablename}{Tabel}
+\begin{document}
+\begin{titlepage}
+\pagecolor{navy}\color{white}
+\vspace*{3cm}
+{\color{cyan}\rule{4cm}{5pt}}\par\vspace{1cm}
+{\large\color{cyan} MANUAL PENGGUNA DAN PENERAPAN}\par\vspace{0.6cm}
+{\fontsize{46}{50}\selectfont\bfseries PASUPATASTRA}\par\vspace{0.4cm}
+{\LARGE Unified Command Center For Multi-drone Operations}\par\vspace{2cm}
+{\large Ground Control Station multi-drone: konsol operator, server, bridge DJI dan Autel, video, dan analitik AI}\par
+\vfill
+{\color{cyan!60!white}\large Versi perangkat lunak 0.3.0 \quad·\quad DarmawanRobotics / nextgen-gcs}\par
+{\color{cyan!60!white} Dokumen internal. Isi dapat berubah mengikuti pengembangan.}
+\end{titlepage}
+\pagecolor{white}\color{black}
+\tableofcontents
+\input{bab/01-pendahuluan}
+\input{bab/02-arsitektur}
+\input{bab/03-deploy}
+\input{bab/04-bridge}
+\input{bab/05-video}
+\input{bab/06-konsol}
+\input{bab/07-ai}
+\input{bab/08-keselamatan}
+\input{bab/09-performa}
+\input{bab/10-masalah}
+\input{bab/11-fitur}
+\appendix
+\input{bab/a-protokol}
+\input{bab/b-referensi}
+\end{document}

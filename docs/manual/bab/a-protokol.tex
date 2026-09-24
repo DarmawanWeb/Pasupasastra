@@ -1,0 +1,33 @@
+\chapter{Protokol bridge}\label{lamp:protokol}
+\section{Endpoint}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+URL & Kegunaan \\ \midrule
+\code{ws:\allowbreak{}/\allowbreak{}/\allowbreak{}<server>:\allowbreak{}8080/\allowbreak{}telemetry/\allowbreak{}<id>} & Bridge DJI (ID di jalur) \\
+\code{ws:\allowbreak{}/\allowbreak{}/\allowbreak{}<server>:\allowbreak{}8080/\allowbreak{}ws/\allowbreak{}drone} & Bridge Autel/generik (\code{droneId} di setiap pesan) \\
+\code{ws:\allowbreak{}/\allowbreak{}/\allowbreak{}<server>:\allowbreak{}8080/\allowbreak{}bridge/\allowbreak{}<id>} & Bridge generik dengan ID tetap \\
+\bottomrule
+\end{tabularx}
+
+Tambahkan \code{?token=\allowbreak{}<GCS\_\allowbreak{}BRIDGE\_\allowbreak{}TOKEN>} bila token diaktifkan.
+\section{Pesan}
+\begin{lstlisting}
+bridge → server  {"type":"hello","droneId":"evo2-v3-001","vendor":"autel",
+                  "capabilities":["telemetry","commands","mission"]}
+server → bridge  {"type":"command","id":"8f2a…","command":{"type":"takeoff","altM":10}}
+server → bridge  {"type":"mission","id":"11b0…","plan":{"name":"Uji","takeoffAltM":20,
+                  "endAction":"rtl","waypoints":[{"lat":-6.2,"lon":106.84,"altM":30,
+                  "speedMs":3,"holdS":0,"action":"none"}]}}
+bridge → server  {"type":"ack","droneId":"evo2-v3-001","id":"8f2a…","accepted":true,
+                  "message":"Lepas landas (EVO II naik ±1,2 m lalu hover)"}
+bridge → server  {"type":"event","droneId":"evo2-v3-001","severity":"info",
+                  "message":"Titik 2/3 tercapai"}
+\end{lstlisting}
+Permintaan dan jawaban dicocokkan lewat field \code{id}. Batas waktu jawaban: 10 s untuk perintah, 30 s untuk misi.
+\section{Telemetri}
+DJI (tanpa \code{type}, 10 Hz): \code{pos\{lat,lon,alt\}}, \code{att\{pitch,roll,yaw\}}, \code{vel\{x,y,z\}} (NED), \code{heading}, \code{flying}, \code{sats}, \code{battery}, \code{mode}, \code{motors}, \code{home\{lat,lon\}}, \code{ts}.
+
+Autel (\code{\{"type":\allowbreak{}"telemetry","droneId",.\allowbreak{}.\allowbreak{}.\allowbreak{},"data":\allowbreak{}\{.\allowbreak{}.\allowbreak{}.\allowbreak{}\}\}}, 5 Hz): \code{latitude}, \code{longitude}, \code{relativeAltitude}, \code{roll}, \code{pitch}, \code{yaw}, \code{groundSpeed}, \code{velocityZ}, \code{satelliteCount}, \code{gpsFixType}, \code{batteryPercentage}, \code{flightMode}, \code{homeLatitude}, \code{homeLongitude}, \code{rcSignalLost}, \code{connected}, dan lainnya.
+\section{Jenis perintah}
+\code{arm}, \code{disarm}, \code{takeoff\{altM\}}, \code{land}, \code{rtl}, \code{hold}, \code{set-mode\{mode\}}, \code{goto\{lat,lon,altM\}}, \code{mission-start}, \code{mission-pause}, \code{payload-release}, \code{set-lens\{lens:\allowbreak{} rgb|thermal|split\}}.

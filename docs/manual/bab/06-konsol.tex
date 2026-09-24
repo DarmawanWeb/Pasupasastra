@@ -1,0 +1,36 @@
+\chapter{Panduan konsol}
+\section{Masuk}
+Buka alamat konsol, isi nama pengguna dan kata sandi. Sesi berlaku 12 jam. Mengganti kata sandi mengeluarkan semua sesi lain.
+
+\section{Terbang}
+Tampilan instrumen seperti QGroundControl: peta, horizon buatan, data terbang, dan panel aksi di kiri. Pilih drone di bilah atas.
+\begin{itemize}
+\item Aksi (lepas landas, mendarat, RTH, tahan, terbang ke titik) aktif hanya bila link terhubung dan bridge mengizinkan kendali. Arahkan kursor ke tombol abu-abu untuk melihat alasannya.
+\item Aksi kritis memakai \emph{geser untuk konfirmasi}.
+\item \ui{Terbang ke titik}: aktifkan mode, klik peta, konfirmasi ketinggian.
+\end{itemize}
+
+\section{Misi}
+Klik peta untuk menambah titik; atur ketinggian, kecepatan, waktu tahan, dan aksi (foto, hover, lepas payload untuk drone demo). \ui{Simpan} menyimpan rencana di server. \ui{Unggah ke drone} mengirim ke drone; \ui{Mulai misi} aktif setelah unggahan berhasil. Rencana bisa diekspor/impor sebagai JSON.
+
+\section{Titik drop}
+Target drop berupa koordinat nyata yang tersimpan dan tampil di peta. Eksekusi hanya berjalan pada \textcolor{demo}{\textbf{drone demo}} (simulasi): drone menuju titik, stabil, melepas payload, lalu kembali. Drone nyata memerlukan integrasi payload khusus.
+
+\section{Peta armada}
+Semua drone (warna menurut status; drone demo ungu), kamera tetap, target drop, jejak terbang saat ini, dan riwayat penerbangan yang bisa diputar.
+
+\section{Video}
+\begin{itemize}
+\item Grid semua stream; label \emph{CCTV} untuk kamera tetap.
+\item Pemilih model: centang beberapa model sekaligus (maks. 6) untuk satu stream.
+\item \ui{Mode fokus}: satu stream besar dengan hitungan grup, waktu inferensi per model, pemilih lensa (DJI), umpan caption AI, dan panel tanya-jawab visual (ketik atau gunakan mikrofon).
+\end{itemize}
+
+\section{Drone dan Kamera}
+Registri drone (ID, callsign, model, telemetri, sumber video, parameter terbang) dan registri kamera tetap. Saklar \ui{Drone demo (simulasi)} membuat wahana simulasi untuk fitur demo.
+
+\section{Model AI}
+Unggah model (\code{.pt}, \code{.onnx}, \code{.engine}, atau \code{.mlpackage} dalam zip), \ui{Muat} ke worker, lalu \ui{Ubah} untuk mengatur ambang keyakinan, interval frame, filter kelas, dan warna kotak. Perubahan parameter berlaku tanpa memuat ulang model.
+
+\section{Log dan Pengaturan}
+\ui{Log} menampilkan kejadian sistem, kendaraan, AI, dan audit perintah dengan filter. \ui{Pengaturan} berisi akun, satuan, peta, dan preferensi tampilan.

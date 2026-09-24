@@ -1,0 +1,46 @@
+\chapter{Keselamatan dan prosedur uji terbang}
+\begin{bahaya}[Pilot tetap penanggung jawab]
+PASUPATASTRA tidak menggantikan pilot. Selama drone dikendalikan dari GCS, pilot memegang remote, melihat drone secara langsung, dan siap mengambil alih kapan saja. Mematikan interlock hanya menolak perintah \emph{baru}; misi yang sedang berjalan dihentikan dari remote (tombol jeda/rem atau RTH sesuai manual vendor) atau tombol \ui{Tahan} di konsol.
+\end{bahaya}
+
+\section{Lapisan keselamatan}
+\begin{enumerate}
+\item \textbf{Interlock di remote}: kendali dari GCS mati secara bawaan.
+\item \textbf{Batas misi ganda} di server dan bridge (Bab~4.2).
+\item \textbf{Konfirmasi geser} untuk aksi kritis di konsol.
+\item \textbf{Log audit}: setiap perintah beserta pengguna, hasil, dan pesan.
+\item \textbf{Peran pengguna}: akun pengamat tidak dapat mengirim perintah.
+\item \textbf{Failsafe vendor}: hilang sinyal RC memicu kembali ke home (diatur di misi).
+\end{enumerate}
+
+\section{Daftar periksa sebelum terbang}
+\begin{itemize}
+\item Area terbuka tanpa orang di bawah jalur, izin terbang sesuai ketentuan setempat.
+\item Pilot memegang remote, satu pengamat visual, komunikasi dengan operator konsol.
+\item Baterai drone dan remote di atas 60~\%, GPS minimal 12 satelit, titik home tercatat.
+\item Ketinggian RTH di aplikasi vendor di atas rintangan tertinggi; batas ketinggian drone diatur.
+\item Konsol: drone \emph{terhubung}, posisi, arah, dan baterai sama dengan aplikasi vendor.
+\item Interlock \textbf{mati} sampai pilot menyatakan siap.
+\end{itemize}
+
+\section{Urutan uji lapangan pertama}
+Lakukan berurutan; lanjut hanya bila tahap sebelumnya berhasil.
+\begin{longtable}{@{}p{1.1cm}p{4.2cm}p{9.6cm}@{}}
+\toprule
+Tahap & Uji & Langkah dan hasil yang diharapkan \\ \midrule
+\endhead
+0 & Telemetri saja & Interlock mati. Gerakkan drone di darat/terbang manual; konsol mengikuti. Tombol aksi abu-abu dengan alasan \emph{Kendali belum diizinkan}. \\
+1 & Arm/disarm (Autel) & Interlock menyala, drone di darat. \ui{Aktifkan motor} → baling-baling berputar; dalam 5 detik \ui{Matikan motor}. Pada DJI, perintah ini ditolak dengan penjelasan (perilaku benar). \\
+2 & Lepas landas pendek & \ui{Lepas landas} → drone naik sekitar 1,2 m dan hover. Tunggu 10 detik, \ui{Mendarat}. Periksa kejadian di Log. \\
+3 & RTH & Pilot menerbangkan manual ke 15--20 m tinggi dan sekitar 20 m jauhnya. \ui{Kembali ke home} → drone naik ke ketinggian RTH, kembali, dan mendarat. \\
+4 & Tahan & Saat RTH berjalan, tekan \ui{Tahan} → RTH dibatalkan, drone hover. \\
+5 & Waypoint dekat & Rencana 2--3 titik, ketinggian 20--30 m, jarak kurang dari 100 m, kecepatan 3 m/s, akhir: kembali ke home. Lepas landas dulu, lalu \ui{Unggah ke drone} dan \ui{Mulai misi}. Uji \ui{Jeda} dan lanjutkan. Kejadian \emph{Titik n tercapai} muncul di Log. \\
+\bottomrule
+\end{longtable}
+
+\section{Jika terjadi masalah}
+\begin{itemize}
+\item Drone bergerak tidak sesuai: pilot segera ambil alih dengan remote (jeda/rem, lalu stik manual).
+\item Konsol kehilangan link: drone tetap mengikuti perintah terakhir dan failsafe vendor; kendalikan dari remote.
+\item Catat waktu, lalu ekspor kejadian dari halaman Log untuk evaluasi.
+\end{itemize}

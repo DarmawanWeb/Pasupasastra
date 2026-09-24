@@ -1,0 +1,19 @@
+\chapter{Pemecahan masalah}
+\begin{longtable}{@{}p{4.6cm}p{10.4cm}@{}}
+\toprule
+Gejala & Penyebab dan tindakan \\ \midrule
+\endhead
+Drone tidak muncul terhubung & IP/port di bridge salah, firewall macOS memblokir 8080, atau ID drone di bridge berbeda dengan di konsol (lihat kejadian \emph{drone tidak dikenal} di Log). \\
+Tombol aksi abu-abu \emph{Kendali belum diizinkan} & Interlock di aplikasi bridge mati. DJI: nyalakan sebelum START BRIDGE. Autel: nyalakan lalu SAVE. \\
+Perintah \emph{timeout} & Bridge tidak menjawab dalam 10 s (misi 30 s): periksa koneksi Wi-Fi RC dan log aplikasi bridge. \\
+DJI menolak \emph{Aktifkan motor} & Perilaku benar: MSDK v5 tidak punya arm terpisah. \\
+Lepas landas Autel ditolak & GPS belum valid, kalibrasi kompas/IMU diminta, atau drone tidak di darat. Periksa aplikasi Autel. \\
+Misi ditolak & Melebihi batas (120 m, 1 km, 10 m/s, 99 titik) atau posisi drone belum diketahui. Pesan menyebut titik yang bermasalah. \\
+Stream \emph{Tidak ada siaran} & Jalur RTMP di perangkat berbeda dengan yang terdaftar, atau port 1935 terblokir. \\
+Video hitam di konsol & WebRTC: isi \code{LAN\_IP}, buka UDP 8189; dari luar LAN gunakan VPN. \\
+\code{worker: null} di /health & Worker mati atau NATS tak terjangkau: \code{pm2 logs gcs-worker}. \\
+Model gagal dimuat & Format tidak cocok dengan worker (CoreML hanya macOS), file rusak, atau paket \code{ultralytics} belum terpasang. \\
+Caption tidak muncul & \code{ollama pull moondream}; caption hanya berjalan di mode fokus. \\
+STT 503 & faster-whisper belum terpasang di server; konsol memakai STT browser. \\
+\bottomrule
+\end{longtable}

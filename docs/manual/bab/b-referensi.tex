@@ -1,0 +1,116 @@
+\chapter{Referensi}
+\section{Variabel lingkungan API}
+\begin{longtable}{@{}p{7.2cm}p{7.8cm}@{}}
+\toprule Variabel & Bawaan \\ \midrule \endhead
+\code{GCS\_HOST} & \code{"0.0.0.0"} \\
+\code{GCS\_PORT} & \code{8080} \\
+\code{GCS\_LOG\_LEVEL} & \code{"info"} \\
+\code{GCS\_\allowbreak{}DATABASE\_\allowbreak{}URL} & \code{"postgresql:\allowbreak{}/\allowbreak{}/\allowbreak{}gcs:\allowbreak{}gcs@localhost:\allowbreak{}5432/\allowbreak{}gcs} \\
+\code{GCS\_NATS\_URL} & \code{"nats:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}4222"} \\
+\code{GCS\_\allowbreak{}JWT\_\allowbreak{}SECRET} & \code{""} \\
+\code{GCS\_\allowbreak{}JWT\_\allowbreak{}TTL\_\allowbreak{}HOURS} & \code{12} \\
+\code{GCS\_\allowbreak{}ADMIN\_\allowbreak{}USERNAME} & \code{"admin"} \\
+\code{GCS\_\allowbreak{}ADMIN\_\allowbreak{}PASSWORD} & \code{""} \\
+\code{GCS\_\allowbreak{}ADMIN\_\allowbreak{}DISPLAY\_\allowbreak{}NAME} & \code{"Administrator"} \\
+\code{GCS\_\allowbreak{}CORS\_\allowbreak{}ORIGINS} & \code{(daftar)} \\
+\code{GCS\_\allowbreak{}BRIDGE\_\allowbreak{}TOKEN} & \code{""} \\
+\code{GCS\_\allowbreak{}DJI\_\allowbreak{}DEFAULT\_\allowbreak{}DRONE\_\allowbreak{}ID} & \code{"m4t-001"} \\
+\code{GCS\_\allowbreak{}AUTEL\_\allowbreak{}ATTITUDE\_\allowbreak{}UNIT} & \code{"deg"} \\
+\code{GCS\_\allowbreak{}AUTEL\_\allowbreak{}VZ\_\allowbreak{}DOWN\_\allowbreak{}POSITIVE} & \code{True} \\
+\code{GCS\_\allowbreak{}TELEMETRY\_\allowbreak{}BROADCAST\_\allowbreak{}HZ} & \code{5.0} \\
+\code{GCS\_\allowbreak{}MEDIAMTX\_\allowbreak{}API\_\allowbreak{}URL} & \code{"http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}9997"} \\
+\code{GCS\_\allowbreak{}MEDIAMTX\_\allowbreak{}RTSP\_\allowbreak{}URL} & \code{"rtsp:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}8554"} \\
+\code{GCS\_\allowbreak{}MEDIAMTX\_\allowbreak{}WEBRTC\_\allowbreak{}PUBLIC\_\allowbreak{}URL} & \code{"http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}8889"} \\
+\code{GCS\_\allowbreak{}MEDIAMTX\_\allowbreak{}HLS\_\allowbreak{}PUBLIC\_\allowbreak{}URL} & \code{"http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}8888"} \\
+\code{GCS\_\allowbreak{}MEDIAMTX\_\allowbreak{}LOCAL\_\allowbreak{}HOSTS} & \code{(daftar)} \\
+\code{GCS\_\allowbreak{}MODELS\_\allowbreak{}DIR} & \code{"data/models"} \\
+\code{GCS\_\allowbreak{}MODEL\_\allowbreak{}MAX\_\allowbreak{}BYTES} & \code{1024 * 1024 * 1024} \\
+\code{GCS\_\allowbreak{}MODEL\_\allowbreak{}LOAD\_\allowbreak{}TIMEOUT\_\allowbreak{}S} & \code{180.0} \\
+\code{GCS\_\allowbreak{}OLLAMA\_\allowbreak{}URL} & \code{"http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}11434"} \\
+\code{GCS\_VLM\_MODEL} & \code{"moondream"} \\
+\code{GCS\_\allowbreak{}TRANSLATE\_\allowbreak{}MODEL} & \code{""} \\
+\code{GCS\_\allowbreak{}VLM\_\allowbreak{}TIMEOUT\_\allowbreak{}S} & \code{120.0} \\
+\code{GCS\_\allowbreak{}STT\_\allowbreak{}ENGINE} & \code{"faster-whisper"} \\
+\code{GCS\_STT\_MODEL} & \code{"small"} \\
+\code{GCS\_\allowbreak{}STT\_\allowbreak{}DEVICE} & \code{"cpu"} \\
+\code{GCS\_\allowbreak{}STT\_\allowbreak{}COMPUTE\_\allowbreak{}TYPE} & \code{"int8"} \\
+\code{GCS\_\allowbreak{}DEMO\_\allowbreak{}ENABLED} & \code{True} \\
+\code{GCS\_\allowbreak{}SEED\_\allowbreak{}DEMO\_\allowbreak{}DRONE} & \code{True} \\
+\code{GCS\_\allowbreak{}DEMO\_\allowbreak{}BASE\_\allowbreak{}LAT} & \code{-6.2088} \\
+\code{GCS\_\allowbreak{}DEMO\_\allowbreak{}BASE\_\allowbreak{}LON} & \code{106.8456} \\
+\code{GCS\_\allowbreak{}SIM\_\allowbreak{}TIME\_\allowbreak{}SCALE} & \code{1.0} \\
+\bottomrule\end{longtable}
+\section{Variabel lingkungan worker}
+\begin{longtable}{@{}p{7.2cm}p{7.8cm}@{}}
+\toprule Variabel & Bawaan \\ \midrule \endhead
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}NATS\_\allowbreak{}URL} & \code{nats:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}4222} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}MODELS\_\allowbreak{}DIR} & \code{data/models} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}DETECTOR\_\allowbreak{}BACKEND} & \code{auto | ultralytics | onnxruntime} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}ANNOTATED\_\allowbreak{}OUTPUT} & \code{true} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}ENCODER} & \code{libx264 | h264\_\allowbreak{}videotoolbox | h264\_\allowbreak{}nvenc} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}OUTPUT\_\allowbreak{}MAX\_\allowbreak{}WIDTH} & \code{1280} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}OUTPUT\_\allowbreak{}FPS\_\allowbreak{}CAP} & \code{25} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}DETECTION\_\allowbreak{}HZ} & \code{5} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}OLLAMA\_\allowbreak{}URL} & \code{http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}11434} \\
+\code{GCS\_\allowbreak{}WORKER\_\allowbreak{}PROMPTS\_\allowbreak{}FILE} & \code{prompts.\allowbreak{}default.\allowbreak{}toml} \\
+\bottomrule\end{longtable}
+\section{Endpoint API}
+Semua endpoint kecuali \code{/auth/login}, \code{/health}, dan endpoint bridge memerlukan header \code{Authorization:\allowbreak{} Bearer <token>} (WebSocket/SSE: \code{?access\_token=}).
+\begin{longtable}{@{}p{2cm}p{13cm}@{}}
+\toprule Metode & Jalur \\ \midrule \endhead
+GET & \code{/streams} \\
+PUT & \code{/\allowbreak{}streams/\allowbreak{}\{stream\_\allowbreak{}id\}/\allowbreak{}model} \\
+PUT & \code{/\allowbreak{}streams/\allowbreak{}\{stream\_\allowbreak{}id\}/\allowbreak{}models} \\
+POST & \code{/streams/focus} \\
+GET & \code{/\allowbreak{}streams/\allowbreak{}\{stream\_\allowbreak{}id\}/\allowbreak{}detections/\allowbreak{}latest} \\
+GET & \code{/\allowbreak{}streams/\allowbreak{}\{stream\_\allowbreak{}id\}/\allowbreak{}captions} \\
+GET & \code{/models} \\
+POST & \code{/models} \\
+PATCH & \code{/\allowbreak{}models/\allowbreak{}\{model\_\allowbreak{}id\}} \\
+DELETE & \code{/\allowbreak{}models/\allowbreak{}\{model\_\allowbreak{}id\}} \\
+POST & \code{/\allowbreak{}models/\allowbreak{}\{model\_\allowbreak{}id\}/\allowbreak{}load} \\
+POST & \code{/\allowbreak{}models/\allowbreak{}\{model\_\allowbreak{}id\}/\allowbreak{}unload} \\
+POST & \code{/vlm/ask} \\
+POST & \code{/stt/transcribe} \\
+POST & \code{/auth/login} \\
+GET & \code{/auth/me} \\
+POST & \code{/\allowbreak{}auth/\allowbreak{}change-password} \\
+POST & \code{/auth/logout} \\
+GET & \code{/drones} \\
+POST & \code{/drones} \\
+POST & \code{/\allowbreak{}drones/\allowbreak{}test-link} \\
+GET & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}} \\
+PUT & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}} \\
+DELETE & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}} \\
+GET & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}/\allowbreak{}flights} \\
+POST & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}/\allowbreak{}commands} \\
+POST & \code{/\allowbreak{}drones/\allowbreak{}\{drone\_\allowbreak{}id\}/\allowbreak{}mission} \\
+GET & \code{/cameras} \\
+POST & \code{/cameras} \\
+PUT & \code{/\allowbreak{}cameras/\allowbreak{}\{camera\_\allowbreak{}id\}} \\
+DELETE & \code{/\allowbreak{}cameras/\allowbreak{}\{camera\_\allowbreak{}id\}} \\
+GET & \code{/missions} \\
+GET & \code{/\allowbreak{}missions/\allowbreak{}\{mission\_\allowbreak{}id\}} \\
+POST & \code{/missions} \\
+PUT & \code{/\allowbreak{}missions/\allowbreak{}\{mission\_\allowbreak{}id\}} \\
+DELETE & \code{/\allowbreak{}missions/\allowbreak{}\{mission\_\allowbreak{}id\}} \\
+GET & \code{/drops} \\
+POST & \code{/drops} \\
+PUT & \code{/\allowbreak{}drops/\allowbreak{}\{drop\_\allowbreak{}id\}} \\
+DELETE & \code{/\allowbreak{}drops/\allowbreak{}\{drop\_\allowbreak{}id\}} \\
+POST & \code{/\allowbreak{}drops/\allowbreak{}\{drop\_\allowbreak{}id\}/\allowbreak{}execute} \\
+POST & \code{/\allowbreak{}drops/\allowbreak{}\{drop\_\allowbreak{}id\}/\allowbreak{}cancel} \\
+GET & \code{/events} \\
+GET & \code{/health} \\
+WS & \code{/ws/realtime} \\
+WS & \code{/ws/drone} \\
+WS & \code{/\allowbreak{}bridge/\allowbreak{}\{drone\_\allowbreak{}id\}} \\
+WS & \code{/telemetry} \\
+WS & \code{/\allowbreak{}telemetry/\allowbreak{}\{drone\_\allowbreak{}id\}} \\
+\bottomrule\end{longtable}
+\section{CLI administrasi}
+\begin{lstlisting}
+gcs-admin create-user --username <u> --display-name <nama> \
+    --role admin|operator|observer [--unit <satuan>]
+gcs-admin set-password --username <u>
+\end{lstlisting}

@@ -1,0 +1,72 @@
+\chapter{Penerapan server}
+\section{Kebutuhan}
+\begin{itemize}
+\item Mac Mini M4 (disarankan RAM 16~GB atau lebih) dengan macOS terbaru, IP LAN tetap (contoh di manual: \code{192.168.1.10}).
+\item Docker Desktop, Homebrew, Node.js 20+, Python 3.12, Ollama, PM2.
+\item Router Wi-Fi yang menghubungkan server dengan remote controller drone dan laptop operator.
+\end{itemize}
+
+\section{Instalasi satu kali}
+\begin{lstlisting}
+git clone <repo> pasupatastra && cd pasupatastra
+# ffmpeg, venv Python, ollama pull moondream + llama3.2:3b, pm2
+./infra/scripts/setup-mac.sh
+cd infra && cp .env.example .env
+\end{lstlisting}
+Isi \code{.env} minimal:
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Variabel & Isi \\ \midrule
+\code{LAN\_IP} & IP LAN server, dipakai sebagai kandidat WebRTC. \\
+\code{PUBLIC\_\allowbreak{}WEBRTC\_\allowbreak{}URL} & \code{http:\allowbreak{}/\allowbreak{}/\allowbreak{}<LAN\_\allowbreak{}IP>:\allowbreak{}8889} \\
+\code{POSTGRES\_\allowbreak{}PASSWORD} & Kata sandi database, acak. \\
+\code{GCS\_\allowbreak{}JWT\_\allowbreak{}SECRET} & String acak panjang (minimal 32 karakter). \\
+\code{GCS\_\allowbreak{}ADMIN\_\allowbreak{}PASSWORD} & Kata sandi awal akun \code{admin}; ganti setelah login pertama. \\
+\code{GCS\_\allowbreak{}BRIDGE\_\allowbreak{}TOKEN} & Opsional. Jika diisi, URL bridge wajib memakai \code{?token=...}. \\
+\bottomrule
+\end{tabularx}
+
+\section{Build konsol}
+\begin{lstlisting}
+cd app && npm ci
+NEXT_PUBLIC_API_URL=http://192.168.1.10:8081/api npm run build   # hasil di app/out
+\end{lstlisting}
+Tanpa \code{NEXT\_\allowbreak{}PUBLIC\_\allowbreak{}API\_\allowbreak{}URL}, konsol berjalan dalam \emph{mode simulasi} penuh di browser tanpa server; berguna untuk pelatihan dan demo.
+
+Aplikasi desktop: \code{npm run tauri build} dengan variabel yang sama menghasilkan installer macOS/Windows.
+
+\section{Menjalankan}
+\begin{lstlisting}
+cd infra
+docker compose up -d --build          # MediaMTX, TimescaleDB, NATS, API, web
+pm2 start pm2/ecosystem.config.cjs    # worker AI native (CoreML / VideoToolbox)
+pm2 save && pm2 startup
+\end{lstlisting}
+Periksa kesehatan: \code{curl http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}8080/\allowbreak{}health} harus berisi \code{"ok": true}, dan \code{"worker"} tidak \code{null} setelah worker berjalan.
+
+Buka konsol di \code{http:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}8081}, masuk sebagai \code{admin}, lalu ganti kata sandi di \ui{Pengaturan → Akun}.
+
+\section{Akun operator}
+Tidak ada pendaftaran mandiri. Administrator membuat akun lewat CLI:
+\begin{lstlisting}
+docker compose exec api gcs-admin create-user \
+    --username op1 --display-name "Operator 1" --role operator
+docker compose exec api gcs-admin set-password --username op1
+\end{lstlisting}
+Peran: \code{admin} (semua), \code{operator} (mengubah data dan mengirim perintah), \code{observer} (hanya melihat).
+
+\section{Server Linux dengan GPU NVIDIA}
+\code{docker compose --profile gpu up -d} menjalankan worker CUDA dan Ollama di container. Model CoreML (\code{.mlpackage}) hanya berjalan pada worker macOS.
+
+\section{Akses jarak jauh}
+\begin{catatan}
+Cloudflare Tunnel (\code{infra/\allowbreak{}cloudflared/\allowbreak{}config.\allowbreak{}example.\allowbreak{}yml}) hanya meneruskan HTTP: konsol, API, dan WebSocket berfungsi, tetapi media WebRTC (UDP) tidak. Untuk video langsung dari luar LAN gunakan VPN (WireGuard atau Tailscale) ke jaringan pos komando.
+\end{catatan}
+
+\section{Pemeliharaan}
+\begin{itemize}
+\item Cadangan database: \code{docker compose exec postgres pg\_\allowbreak{}dump -U gcs gcs > backup.\allowbreak{}sql}
+\item Pembaruan: \code{git pull}, build ulang konsol, \code{docker compose up -d --build}, \code{pm2 restart gcs-worker}. Migrasi database berjalan otomatis saat API mulai.
+\item Log: \code{docker compose logs -f api}, \code{pm2 logs gcs-worker}.
+\end{itemize}

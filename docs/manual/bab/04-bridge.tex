@@ -1,0 +1,121 @@
+\chapter{Bridge drone}
+Bridge adalah aplikasi Flutter + Kotlin di remote controller. Folder \code{bridges/dji} dan \code{bridges/autel} berisi \code{lib/} (UI Flutter) dan \code{android/} (kode native dan SDK). Gabungkan ke proyek Flutter masing-masing (yang memiliki \code{pubspec.yaml}) atau buat proyek baru dengan \code{flutter create} lalu salin kedua folder tersebut.
+
+\section{Protokol singkat}
+Bridge membuka WebSocket ke server, mengirim \code{hello} berisi kapabilitas, lalu telemetri berkala. Server mengirim \code{command} atau \code{mission} dengan \code{id}, bridge menjawab \code{ack} dengan \code{id} yang sama. Detail JSON ada di Lampiran~\ref{lamp:protokol}.
+
+Kapabilitas \code{commands} dan \code{mission} hanya diumumkan bila interlock menyala. Konsol menonaktifkan tombol yang tidak didukung dan menampilkan alasannya.
+
+\section{Batas keselamatan}
+Dicek dua kali, di server dan di bridge (bridge memakai posisi GPS terbaru):
+\begin{center}
+\begin{tabular}{@{}l r@{}}
+\toprule
+Batas & Nilai \\ \midrule
+Ketinggian titik misi & 5--120 m (dan tidak melebihi \emph{Ketinggian maks.} drone) \\
+Jarak titik dari posisi drone & maks. 1000 m \\
+Kecepatan & maks. 10 m/s \\
+Jumlah titik & maks. 99 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Bridge DJI Matrice 4T}
+\subsection{Prasyarat}
+\begin{itemize}
+\item Remote controller M4T yang didukung DJI Mobile SDK v5.17 (periksa daftar perangkat yang didukung di dokumentasi MSDK).
+\item App key dari \code{developer.\allowbreak{}dji.\allowbreak{}com} untuk paket \code{com.\allowbreak{}darmawan.\allowbreak{}dronebridge}.
+\item Android Studio, Flutter SDK, JDK 17.
+\end{itemize}
+\subsection{Build}
+\begin{lstlisting}
+cd bridges/dji/android
+cp local.properties.example local.properties    # isi sdk.dir, flutter.sdk, DJI_API_KEY
+cd .. && flutter build apk --release
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+\end{lstlisting}
+\begin{catatan}[Kunci API]
+Kunci DJI dibaca dari \code{local.\allowbreak{}properties} (tidak di-commit) dan disisipkan ke manifest saat build. Jangan menulis kunci langsung di \code{AndroidManifest.\allowbreak{}xml}.
+\end{catatan}
+\subsection{Konfigurasi di aplikasi}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Isian & Nilai \\ \midrule
+WebSocket URL & \code{ws:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}8080/\allowbreak{}telemetry/\allowbreak{}m4t-001} (akhir URL = ID drone di konsol) \\
+RTMP URL & \code{rtmp:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}1935/\allowbreak{}m4t} \\
+Izinkan kendali dari GCS & Mati untuk telemetri saja; nyalakan hanya saat pilot siap mengambil alih. Berlaku saat bridge dimulai. \\
+\bottomrule
+\end{tabularx}
+
+Tekan \ui{START BRIDGE}. Bridge berjalan sebagai \emph{foreground service} dan tetap hidup saat aplikasi diminimalkan.
+
+\subsection{Perilaku perintah (MSDK v5)}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Perintah & Implementasi dan catatan \\ \midrule
+Aktifkan/matikan motor & \textbf{Tidak didukung terpisah} oleh MSDK v5. Motor menyala saat lepas landas dan mati otomatis setelah mendarat; bridge menjawab dengan penjelasan. \\
+Lepas landas & \code{KeyStartTakeoff}: naik sekitar 1,2 m lalu hover. \\
+Mendarat & \code{KeyStartAutoLanding}. \\
+Kembali ke home & \code{KeyStartGoHome}. \\
+Tahan posisi & Menjeda misi, atau \code{KeyStopGoHome} / \code{KeyStopAutoLanding}. \\
+Terbang ke titik & Misi satu titik (KMZ), berakhir hover. \\
+Misi waypoint & KMZ WPML dibuat di aplikasi, diunggah dengan \code{pushKMZFileToAircraft}, dijalankan dengan \code{startMission}. Ketinggian relatif titik lepas landas; hilang sinyal RC: kembali. \\
+Lensa & RGB, Termal, atau Split (PIP) tanpa perlu interlock. \\
+Lepas payload & Tidak didukung; butuh integrasi PSDK. \\
+\bottomrule
+\end{tabularx}
+
+\begin{catatan}[Status verifikasi]
+Nama dan tanda tangan API DJI dicocokkan dengan sampel resmi \code{Mobile-SDK-Android-V5}. Kode belum dikompilasi dengan SDK DJI (SDK hanya tersedia dari Maven DJI); build pertama di Android Studio adalah pemeriksaan wajib.
+\end{catatan}
+
+\section{Bridge Autel EVO II V3}
+\subsection{Prasyarat}
+\begin{itemize}
+\item Autel Smart Controller V3, EVO II V3.
+\item App key dari Autel Developer untuk paket \code{com.\allowbreak{}darmawanrobotics.\allowbreak{}autelgcsbridge}.
+\item SDK \code{autel-sdk-release.\allowbreak{}aar} (v1.5) di \code{android/\allowbreak{}app/\allowbreak{}libs/\allowbreak{}}.
+\end{itemize}
+\subsection{Build}
+\begin{lstlisting}
+cd bridges/autel/android
+cp local.properties.example local.properties    # isi sdk.dir, flutter.sdk, AUTEL_APP_KEY
+cd .. && flutter build apk --release
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+\end{lstlisting}
+\subsection{Konfigurasi di aplikasi (menu Pengaturan)}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Isian & Nilai \\ \midrule
+WebSocket URL & \code{ws:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}8080/\allowbreak{}ws/\allowbreak{}drone} \\
+Drone ID & \code{evo2-v3-001} (sama dengan ID di konsol) \\
+Telemetry rate & 5 Hz \\
+Izinkan kendali dari GCS & Mati bawaan. Menyimpan pengaturan memulai ulang koneksi dan mengumumkan kapabilitas baru. \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Perilaku perintah (Autel SDK v1.5)}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l X@{}}
+\toprule
+Perintah & Implementasi dan catatan \\ \midrule
+Aktifkan/matikan motor & \code{Evo2FlyController.\allowbreak{}droneArmed/\allowbreak{}droneDisarmed}; ditolak saat di udara. \\
+Lepas landas & \code{takeOff}: naik sekitar 1,2 m lalu hover; ditolak bila GPS belum valid. \\
+Mendarat & \code{land(false)}. \\
+Kembali ke home & \code{goHome}. \\
+Tahan posisi & Menjeda misi, atau \code{cancelReturn} / \code{cancelLand}. \\
+Terbang ke titik & Misi satu titik \code{Evo2WaypointMission}, berakhir hover. \\
+Misi waypoint & \code{MissionManager.\allowbreak{}prepareMission} lalu \code{startMission}; hover pada titik dengan waktu tahan; hindar rintangan: hover; hilang sinyal RC: kembali ke home. \\
+Lensa, payload & Tidak didukung untuk EVO II V3. \\
+\bottomrule
+\end{tabularx}
+
+\begin{catatan}[Status verifikasi]
+\code{CommandHandler.\allowbreak{}kt} dikompilasi terhadap \code{autel-sdk-release.\allowbreak{}aar} asli, dan urutan misi mengikuti sampel resmi \code{AutelSDK/\allowbreak{}AndroidAdvanceSample}.
+\end{catatan}
+
+\section{Mendaftarkan drone di konsol}
+Buka \ui{Drone → Tambah drone}: ID sama dengan bridge, protokol telemetri \emph{WebSocket} (URL boleh kosong karena bridge yang menyambung), sumber video dengan URL RTMP yang sama seperti di bridge. Tombol \ui{Uji tautan} menampilkan apakah bridge sudah terhubung.

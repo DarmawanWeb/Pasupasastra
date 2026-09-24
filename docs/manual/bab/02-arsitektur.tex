@@ -1,0 +1,52 @@
+\chapter{Arsitektur}
+\begin{center}
+\begin{tikzpicture}[font=\small,
+  box/.style={draw=ink!40,fill=paper,rounded corners=3pt,align=left,inner sep=6pt,text width=#1},
+  dark/.style={fill=ink,text=white,rounded corners=3pt,align=left,inner sep=6pt,text width=#1},
+  arr/.style={-{Stealth[length=7pt]},thick,teal}]
+\node[box=3.4cm] (dji) {\textbf{Bridge DJI M4T}\\MSDK v5 · WS + RTMP};
+\node[box=3.4cm,below=0.35cm of dji] (autel) {\textbf{Bridge Autel EVO II}\\SDK v1.5 · WebSocket};
+\node[box=3.4cm,below=0.35cm of autel] (lito) {\textbf{LITO X1 · SIYI}\\RTMP};
+\node[box=3.4cm,below=0.35cm of lito] (cctv) {\textbf{HP / CCTV}\\RTMP · RTSP};
+\node[dark=4cm,right=1.6cm of dji,yshift=-0.4cm] (api) {\textbf{gcs-api} :8080\\bridge, perintah, misi,\\simulator, auth, VLM};
+\node[dark=4cm,below=1.2cm of api] (mtx) {\textbf{MediaMTX}\\RTMP :1935 · RTSP :8554\\WebRTC :8889 · HLS :8888};
+\node[box=3.6cm,right=1.4cm of api,yshift=0.6cm] (ui) {\textbf{Konsol operator}\\web :8081 · Tauri};
+\node[box=3.6cm,below=0.5cm of ui] (worker) {\textbf{gcs-worker}\\YOLO · Moondream};
+\node[box=3.6cm,below=0.5cm of worker] (db) {\textbf{PostgreSQL, NATS,}\\\textbf{Ollama}};
+\draw[arr] (dji.east) -- node[above,font=\scriptsize]{telemetri} (api.west);
+\draw[arr] (autel.east) -- (api.west);
+\draw[arr] (dji.south east) -- (mtx.west);
+\draw[arr] (lito.east) -- (mtx.west);
+\draw[arr] (cctv.east) -- (mtx.west);
+\draw[arr] (api.east) -- (ui.west);
+\draw[arr] (api.east) -- (worker.west);
+\draw[arr] (worker.west) -- (mtx.east);
+\draw[arr] (api.east) -- (db.west);
+\draw[arr] (mtx.north east) -- node[pos=0.3,below right,font=\scriptsize]{WebRTC} (ui.south west);
+\end{tikzpicture}
+\end{center}
+
+\section{Alur data}
+\begin{enumerate}
+\item \textbf{Telemetri.} Bridge membuka WebSocket ke \code{gcs-api}. API menormalkan format vendor ke satu model telemetri, mendeteksi lepas landas dan mendarat, mencatat jejak terbang, lalu menyiarkan ke konsol melalui \code{/ws/realtime} dengan laju 5~Hz per drone.
+\item \textbf{Perintah.} Konsol memanggil \code{POST /\allowbreak{}drones/\allowbreak{}\{id\}/\allowbreak{}commands}. API memeriksa izin, kapabilitas bridge, dan batas keselamatan, lalu mengirim permintaan ke bridge dan menunggu \emph{ack}. Semua perintah dicatat di log audit.
+\item \textbf{Video.} Drone dan ponsel mengirim RTMP ke MediaMTX. Kamera IP (RTSP/HLS) ditarik oleh MediaMTX ke jalur \code{src/<id>}. Konsol menonton lewat WebRTC (WHEP).
+\item \textbf{AI.} API mengirim \emph{desired state} ke worker lewat NATS. Worker membaca RTSP, menjalankan model, menerbitkan deteksi dan caption, dan mempublikasikan video beranotasi ke jalur \code{ai/<path>}.
+\end{enumerate}
+
+\section{Port jaringan}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+Port & Protokol & Kegunaan \\ \midrule
+8080 & HTTP/WS & API, WebSocket realtime, endpoint bridge \\
+8081 & HTTP & Konsol web + proxy API (Caddy) \\
+1935 & TCP & RTMP masuk dari drone, ponsel, CCTV \\
+8554 & TCP & RTSP (worker membaca dan menerbitkan) \\
+8889 & HTTP & WebRTC WHEP untuk konsol \\
+8189 & UDP & Media WebRTC \\
+8888 & HTTP & HLS \\
+8890 & UDP & SRT masuk \\
+\bottomrule
+\end{tabularx}
+

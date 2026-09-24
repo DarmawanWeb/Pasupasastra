@@ -1,0 +1,33 @@
+\chapter{Pendahuluan}
+PASUPATASTRA adalah \emph{ground control station} (GCS) untuk operasi banyak drone dari vendor berbeda dalam satu konsol. Operator melihat posisi dan status seluruh armada di satu peta, menonton video dari drone, ponsel, dan CCTV, menjalankan deteksi objek dan analisis adegan berbasis AI, serta mengirim perintah terbang dan misi waypoint ke drone yang mendukungnya.
+
+Seluruh antarmuka operator berbahasa Indonesia. Seluruh sistem berjalan di server lokal (misalnya Mac Mini M4 di pos komando) tanpa layanan cloud wajib.
+
+\section{Komponen}
+
+\noindent\begin{tabularx}{\linewidth}{@{}>{\bfseries}l X@{}}
+\toprule
+Komponen & Fungsi \\ \midrule
+Konsol (\code{app/}) & Aplikasi operator Next.js, berjalan di browser dan sebagai aplikasi desktop Tauri. \\
+\code{gcs-api} & Server FastAPI: autentikasi, registri drone dan kamera, endpoint bridge, perintah dan misi, simulator drone demo, perekaman penerbangan, tanya-jawab visual (VLM), speech-to-text. \\
+\code{gcs-worker} & Proses inferensi: beberapa model YOLO per stream, hitungan grup, caption Moondream, video beranotasi. \\
+MediaMTX & Server media: menerima RTMP/RTSP/SRT dan menyajikan WebRTC/HLS. \\
+NATS & Bus pesan antara API dan worker. \\
+PostgreSQL + TimescaleDB & Penyimpanan data, kejadian, audit, dan jejak terbang. \\
+Ollama & Model bahasa-visual lokal (Moondream, penerjemah). \\
+Bridge DJI & Aplikasi Android di remote DJI untuk Matrice 4T (MSDK v5.17). \\
+Bridge Autel & Aplikasi Android di Smart Controller V3 untuk EVO II V3 (Autel SDK v1.5). \\
+\bottomrule
+\end{tabularx}
+
+\section{Istilah}
+\begin{description}[leftmargin=3.2cm,style=nextline]
+\item[Bridge] Aplikasi di remote controller yang meneruskan telemetri ke server dan menjalankan perintah dari server.
+\item[Interlock] Saklar \ui{Izinkan kendali dari GCS} di aplikasi bridge. Selama mati, drone hanya mengirim telemetri dan semua perintah ditolak.
+\item[Drone demo] Wahana simulasi di server, berwarna ungu dengan label DEMO, untuk mendemonstrasikan fitur (termasuk drop payload) tanpa drone fisik.
+\item[Stream] Satu sumber video: kamera drone atau kamera tetap (CCTV/ponsel).
+\item[Kunci model] Nama pendek unik model deteksi, dipakai pada hitungan \code{model:kelas}.
+\end{description}
+
+\section{Status dokumen}
+Manual ini menggambarkan versi 0.3.0. Bagian yang belum diuji di perangkat keras nyata ditandai jelas. Hasil pengujian otomatis dan pengukuran performa ada di Bab~\ref{bab:performa}.
