@@ -1,0 +1,40 @@
+# Moondream / VLM captioner settings. HOT RELOAD: edit and save while the worker
+# runs; the next caption cycle uses the new values (syntax errors keep the old ones).
+# Point GCS_WORKER_PROMPTS_FILE at your own copy to customise it.
+
+[moondream]
+model = "moondream"
+interval_sec = 1.0          # focused stream: 1 caption per second (or as fast as inference allows)
+max_side = 768              # resize before sending to Ollama
+keep_alive = "30m"
+timeout_sec = 30
+active = ["caption"]        # more than one = round-robin each cycle
+log_path = "output/moondream.jsonl"   # "" = do not log
+
+[moondream.options]
+temperature = 0.0
+num_predict = 80
+
+# Placeholders: any COUNT_GROUPS name ({orang}, {kendaraan}), {counts} (per class), {time}.
+# Moondream only understands English: keep prompts short and specific.
+[prompts]
+caption = "Describe this aerial image in one short sentence."
+hazard = "Is there any fire, smoke, flood, or collapsed building in this image? Answer briefly."
+crowd = "A detector found {orang} people and {kendaraan} vehicles. Describe what the people are doing in one sentence."
+access = "Is the main road in this image clear or blocked? Answer in one sentence."
+
+# Captions are translated for the operator console (needs a text model in Ollama,
+# e.g. `ollama pull llama3.2:3b`). Empty model = show the original English text.
+[translate]
+model = "llama3.2:3b"
+language = "Indonesian"
+
+# Cross-model counting. Entry "kelas" matches that class in every model,
+# "model:kelas" matches only one model (model = the key shown in the Model AI page).
+[count_groups]
+orang = ["pedestrian", "people", "person"]
+kendaraan = ["bicycle", "car", "van", "truck", "tricycle", "awning-tricycle", "bus", "motor", "motorcycle"]
+
+[overlay]
+show_model_in_label = false
+caption_max_age_sec = 10.0
