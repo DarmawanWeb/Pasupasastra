@@ -1,0 +1,75 @@
+{
+  "login_ms": 614.9,
+  "rest /health": {
+    "n": 300,
+    "p50": 3.85,
+    "p95": 7.47,
+    "p99": 9.7,
+    "mean": 4.08
+  },
+  "rest /drones": {
+    "n": 300,
+    "p50": 5.48,
+    "p95": 10.14,
+    "p99": 11.83,
+    "mean": 5.74
+  },
+  "rest /streams": {
+    "n": 300,
+    "p50": 4.83,
+    "p95": 9.75,
+    "p99": 11.31,
+    "mean": 5.13
+  },
+  "rest /events?limit=200": {
+    "n": 300,
+    "p50": 7.77,
+    "p95": 12.68,
+    "p99": 17.24,
+    "mean": 7.62
+  },
+  "telemetry": {
+    "drones": 20,
+    "hz_per_drone": 10,
+    "seconds": 15,
+    "ingested_msgs": 2963,
+    "ingest_rate_msg_s": 195.8,
+    "delivered_to_console": 1487,
+    "fanout_latency_ms": {
+      "n": 1487,
+      "p50": 44.89,
+      "p95": 97.95,
+      "p99": 101.55,
+      "mean": 49.11
+    }
+  },
+  "command_roundtrip_ms": {
+    "n": 100,
+    "p50": 10.84,
+    "p95": 21.3,
+    "p99": 26.05,
+    "mean": 10.97
+  },
+  "api_process": {
+    "cpu_pct_during_load": 5.3,
+    "rss_mb": 76.4
+  },
+  "worker": {
+    "detection_publish_hz": 4.2,
+    "model_inference_ms": {
+      "n": 35,
+      "p50": 6.9,
+      "p95": 11.4,
+      "p99": 11.4,
+      "mean": 7.53
+    },
+    "health": {
+      "ok": true,
+      "version": "0.3.0",
+      "database": true,
+      "nats": true,
+      "mediamtx": true,
+      "worker": "cpu"
+    }
+  }
+}
