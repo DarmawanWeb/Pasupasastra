@@ -1,0 +1,44 @@
+# MediaMTX for PASUPATASTRA. Drones / phones publish RTMP to rtmp://<server>/<path>,
+# operators watch WebRTC (WHEP) or HLS, the worker reads RTSP and publishes ai/<path>.
+logLevel: info
+
+api: yes
+apiAddress: :9997          # only reachable inside the compose network (not published)
+metrics: no
+
+authInternalUsers:
+  # Publishing / reading is open on the LAN. To require credentials for publishers,
+  # replace the first entry with user/pass and put them in the RTMP URLs.
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      - action: publish
+      - action: read
+      - action: playback
+      - action: api
+
+rtmp: yes
+rtmpAddress: :1935
+
+rtsp: yes
+rtspAddress: :8554
+rtspTransports: [tcp, udp]
+
+webrtc: yes
+webrtcAddress: :8889
+webrtcAllowOrigin: "*"
+webrtcLocalUDPAddress: :8189
+webrtcIPsFromInterfaces: yes
+webrtcAdditionalHosts: []  # set LAN_IP in .env (MTX_WEBRTCADDITIONALHOSTS) when running in Docker
+
+hls: yes
+hlsAddress: :8888
+hlsAllowOrigin: "*"
+hlsVariant: lowLatency
+
+srt: yes
+srtAddress: :8890
+
+paths:
+  all_others:

@@ -1,0 +1,20 @@
+# Single origin for the console: static app + API + WebSocket + video signalling.
+# NEXT_PUBLIC_API_URL=https://<host>/api when building the app for this setup.
+:8081 {
+	encode zstd gzip
+
+	handle_path /api/* {
+		reverse_proxy api:8080
+	}
+	handle_path /webrtc/* {
+		reverse_proxy mediamtx:8889
+	}
+	handle_path /hls/* {
+		reverse_proxy mediamtx:8888
+	}
+	handle {
+		root * /srv/app
+		try_files {path} {path}.html {path}/index.html
+		file_server
+	}
+}

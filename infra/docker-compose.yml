@@ -1,0 +1,118 @@
+# PASUPATASTRA GCS stack.
+#   docker compose up -d                 -> MediaMTX, TimescaleDB, NATS, API, web (Caddy)
+#   docker compose --profile gpu up -d   -> + inference worker and Ollama on an NVIDIA host
+# On macOS the worker and Ollama run natively (CoreML / Metal), see pm2/ecosystem.config.cjs.
+name: pasupatastra
+
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:1.21.1
+    restart: unless-stopped
+    volumes:
+      - ./mediamtx/mediamtx.yml:/mediamtx.yml:ro
+    environment:
+      MTX_WEBRTCADDITIONALHOSTS: ${LAN_IP:-}
+    ports:
+      - "1935:1935"        # RTMP ingest (DJI bridge, LITO X1, SIYI, phone CCTV)
+      - "8554:8554"        # RTSP (worker input / annotated output)
+      - "8889:8889"        # WebRTC WHEP playback
+      - "8189:8189/udp"    # WebRTC media
+      - "8888:8888"        # HLS playback
+      - "8890:8890/udp"    # SRT ingest
+
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gcs
+      POSTGRES_USER: gcs
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gcs -d gcs"]
+      interval: 5s
+      retries: 20
+
+  nats:
+    image: nats:2.11-alpine
+    restart: unless-stopped
+    command: ["-m", "8222"]
+    ports:
+      - "127.0.0.1:4222:4222"   # native worker on the same host
+
+  api:
+    build: ../backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      GCS_DATABASE_URL: postgresql://gcs:${POSTGRES_PASSWORD}@postgres:5432/gcs
+      GCS_NATS_URL: nats://nats:4222
+      GCS_MEDIAMTX_API_URL: http://mediamtx:9997
+      GCS_MEDIAMTX_RTSP_URL: ${WORKER_RTSP_URL:-rtsp://localhost:8554}
+      GCS_MEDIAMTX_WEBRTC_PUBLIC_URL: ${PUBLIC_WEBRTC_URL:-http://localhost:8889}
+      GCS_MEDIAMTX_HLS_PUBLIC_URL: ${PUBLIC_HLS_URL:-http://localhost:8888}
+      GCS_MODELS_DIR: /data/models
+      GCS_OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+    volumes:
+      - ./data/models:/data/models
+    ports:
+      - "8080:8080"             # REST, realtime WS, drone bridges
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      mediamtx:
+        condition: service_started
+
+  web:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../app/out:/srv/app:ro
+    ports:
+      - "8081:8081"
+    depends_on: [api]
+
+  worker:
+    profiles: ["gpu"]
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    environment:
+      GCS_WORKER_NATS_URL: nats://nats:4222
+      GCS_WORKER_MODELS_DIR: /data/models
+      GCS_WORKER_OLLAMA_URL: http://ollama:11434
+      GCS_WORKER_ENCODER: h264_nvenc
+      GCS_WORKER_PROMPTS_FILE: /config/prompts.toml
+    volumes:
+      - ./data/models:/data/models:ro
+      - ./worker/prompts.toml:/config/prompts.toml:ro
+    deploy:
+      resources:
+        reservations:
+          devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]
+
+  ollama:
+    profiles: ["gpu"]
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]
+
+volumes:
+  pgdata:
+  ollama:
