@@ -2,7 +2,7 @@
 # API and WebSocket work; WebRTC media (UDP) does not. Remote viewers should use a
 # VPN (WireGuard / Tailscale) to the LAN for live video.
 tunnel: <TUNNEL_ID>
-credentials-file: /Users/darmawan/.cloudflared/<TUNNEL_ID>.json
+credentials-file: /Users/<you>/.cloudflared/<TUNNEL_ID>.json
 ingress:
   - hostname: gcs.example.com
     service: http://localhost:8081
