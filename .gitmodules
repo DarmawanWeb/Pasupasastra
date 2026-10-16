@@ -1,0 +1,9 @@
+[submodule "be"]
+	path = be
+	url = ../pasupasastra-gcs-be.git
+[submodule "fe"]
+	path = fe
+	url = ../pasupasastra-gcs-fe.git
+[submodule "bridges"]
+	path = bridges
+	url = ../PasupasastraBridge.git
