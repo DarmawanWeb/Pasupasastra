@@ -8,10 +8,11 @@
 
 \section{Instalasi satu kali}
 \begin{lstlisting}
-git clone <repo> pasupasastra && cd pasupasastra
+git clone --recursive https://github.com/DarmawanWeb/Pasupasastra.git
+cd Pasupasastra
 # ffmpeg, venv Python, ollama pull moondream + llama3.2:3b, pm2
-./infra/scripts/setup-mac.sh
-cd infra && cp .env.example .env
+scripts/setup-mac.sh
+cp .env.example .env
 \end{lstlisting}
 Isi \code{.env} minimal:
 
@@ -28,9 +29,10 @@ Variabel & Isi \\ \midrule
 \end{tabularx}
 
 \section{Build konsol}
+\code{scripts/\allowbreak{}deploy.\allowbreak{}sh} membangun konsol otomatis dengan alamat API \code{http://<LAN\_IP>:8081/api}, atau \code{CONSOLE\_\allowbreak{}API\_\allowbreak{}URL} di \code{.env} bila diisi. Build manual:
 \begin{lstlisting}
-cd app && npm ci
-NEXT_PUBLIC_API_URL=http://192.168.1.10:8081/api npm run build   # hasil di app/out
+cd fe && npm ci
+NEXT_PUBLIC_API_URL=http://192.168.1.10:8081/api npm run build   # hasil di fe/out
 \end{lstlisting}
 Tanpa \code{NEXT\_\allowbreak{}PUBLIC\_\allowbreak{}API\_\allowbreak{}URL}, konsol berjalan dalam \emph{mode simulasi} penuh di browser tanpa server; berguna untuk pelatihan dan demo.
 
@@ -38,11 +40,11 @@ Aplikasi desktop: \code{npm run tauri build} dengan variabel yang sama menghasil
 
 \section{Menjalankan}
 \begin{lstlisting}
-cd infra
-docker compose up -d --build          # MediaMTX, TimescaleDB, NATS, API, web
-pm2 start pm2/ecosystem.config.cjs    # worker AI native (CoreML / VideoToolbox)
-pm2 save && pm2 startup
+scripts/deploy.sh   # build konsol, docker compose up -d --build, worker AI via PM2
+pm2 startup         # sekali: PM2 berjalan otomatis saat Mac menyala
 \end{lstlisting}
+Setara dengan \code{docker compose up -d --build} (MediaMTX, TimescaleDB, NATS, API, web) lalu \code{pm2 start pm2/ecosystem.config.cjs} (worker AI native dengan CoreML / VideoToolbox). Opsi \code{--pull} memakai image hasil CI dari GHCR alih-alih build lokal.
+
 Periksa kesehatan: \code{curl http:\allowbreak{}/\allowbreak{}/\allowbreak{}localhost:\allowbreak{}8080/\allowbreak{}health} harus berisi \code{"ok": true}, dan \code{"worker"} tidak \code{null} setelah worker berjalan.
 
 Buka konsol di \code{http:\allowbreak{}/\allowbreak{}/\allowbreak{}192.\allowbreak{}168.\allowbreak{}1.\allowbreak{}10:\allowbreak{}8081}, masuk sebagai \code{admin}, lalu ganti kata sandi di \ui{Pengaturan → Akun}.
@@ -57,16 +59,16 @@ docker compose exec api gcs-admin set-password --username op1
 Peran: \code{admin} (semua), \code{operator} (mengubah data dan mengirim perintah), \code{observer} (hanya melihat).
 
 \section{Server Linux dengan GPU NVIDIA}
-\code{docker compose --profile gpu up -d} menjalankan worker CUDA dan Ollama di container. Model CoreML (\code{.mlpackage}) hanya berjalan pada worker macOS.
+\code{scripts/deploy.sh --gpu} (atau \code{docker compose --profile gpu up -d}) menjalankan worker CUDA dan Ollama di container. Model CoreML (\code{.mlpackage}) hanya berjalan pada worker macOS.
 
 \section{Akses jarak jauh}
 \begin{catatan}
-Cloudflare Tunnel (\code{infra/\allowbreak{}cloudflared/\allowbreak{}config.\allowbreak{}example.\allowbreak{}yml}) hanya meneruskan HTTP: konsol, API, dan WebSocket berfungsi, tetapi media WebRTC (UDP) tidak. Untuk video langsung dari luar LAN gunakan VPN (WireGuard atau Tailscale) ke jaringan pos komando.
+Cloudflare Tunnel (\code{cloudflared/\allowbreak{}config.\allowbreak{}example.\allowbreak{}yml}) hanya meneruskan HTTP: konsol, API, dan WebSocket berfungsi, tetapi media WebRTC (UDP) tidak. Untuk video langsung dari luar LAN gunakan VPN (WireGuard atau Tailscale) ke jaringan pos komando.
 \end{catatan}
 
 \section{Pemeliharaan}
 \begin{itemize}
 \item Cadangan database: \code{docker compose exec postgres pg\_\allowbreak{}dump -U gcs gcs > backup.\allowbreak{}sql}
-\item Pembaruan: \code{git pull}, build ulang konsol, \code{docker compose up -d --build}, \code{pm2 restart gcs-worker}. Migrasi database berjalan otomatis saat API mulai.
+\item Pembaruan: \code{scripts/deploy.sh} menarik perubahan beserta submodule, membangun ulang konsol dan image, lalu memuat ulang worker. Migrasi database berjalan otomatis saat API mulai.
 \item Log: \code{docker compose logs -f api}, \code{pm2 logs gcs-worker}.
 \end{itemize}

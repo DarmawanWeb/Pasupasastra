@@ -1,5 +1,5 @@
 \chapter{Performa}\label{bab:performa}
-Angka di bab ini diukur dengan \code{backend/\allowbreak{}tests/\allowbreak{}bench.\allowbreak{}py} terhadap stack yang benar-benar berjalan (API, worker, NATS, MediaMTX, PostgreSQL) di mesin uji \textbf{1 vCPU Xeon 2,1 GHz, RAM 3 GB}. Mac Mini M4 jauh lebih kuat; ulangi pengukuran di sana untuk angka produksi.
+Angka di bab ini diukur dengan \code{be/\allowbreak{}tests/\allowbreak{}bench.\allowbreak{}py} terhadap stack yang benar-benar berjalan (API, worker, NATS, MediaMTX, PostgreSQL) di mesin uji \textbf{1 vCPU Xeon 2,1 GHz, RAM 3 GB}. Mac Mini M4 jauh lebih kuat; ulangi pengukuran di sana untuk angka produksi.
 
 \section{Ringkasan}
 \begin{center}
@@ -41,7 +41,7 @@ Masing-masing 300 permintaan berurutan.
 
 \section{Mengukur ulang di server produksi}
 \begin{lstlisting}
-cd backend && . .venv/bin/activate
+cd be && . .venv/bin/activate
 python tests/bench.py --api http://localhost:8080 --password <sandi-admin> \
   --drones 20 --hz 10 --seconds 15 --out bench-m4.json
 \end{lstlisting}

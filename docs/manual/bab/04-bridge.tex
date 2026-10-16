@@ -1,5 +1,5 @@
 \chapter{Bridge drone}
-Bridge adalah aplikasi Flutter + Kotlin di remote controller. Folder \code{bridges/dji} dan \code{bridges/autel} berisi \code{lib/} (UI Flutter) dan \code{android/} (kode native dan SDK). Gabungkan ke proyek Flutter masing-masing (yang memiliki \code{pubspec.yaml}) atau buat proyek baru dengan \code{flutter create} lalu salin kedua folder tersebut.
+Bridge adalah aplikasi Flutter + Kotlin di remote controller. Masing-masing adalah proyek Flutter lengkap di repositori sendiri, \code{pasupasastra-\allowbreak{}bridge-\allowbreak{}dji-\allowbreak{}matrice-\allowbreak{}4t} dan \code{pasupasastra-\allowbreak{}bridge-\allowbreak{}autel-\allowbreak{}evo2-\allowbreak{}v3}, yang dikumpulkan di \code{PasupasastraBridge} (submodule \code{bridges/} di repositori utama, satu folder per model drone): \code{lib/} berisi UI Flutter dan \code{android/} berisi kode native serta SDK. Drone baru cukup ditambahkan sebagai folder \code{<vendor>-<model>} baru; panduannya ada di README \code{PasupasastraBridge}.
 
 \section{Protokol singkat}
 Bridge membuka WebSocket ke server, mengirim \code{hello} berisi kapabilitas, lalu telemetri berkala. Server mengirim \code{command} atau \code{mission} dengan \code{id}, bridge menjawab \code{ack} dengan \code{id} yang sama. Detail JSON ada di Lampiran~\ref{lamp:protokol}.
@@ -29,7 +29,7 @@ Jumlah titik & maks. 99 \\
 \end{itemize}
 \subsection{Build}
 \begin{lstlisting}
-cd bridges/dji/android
+cd bridges/dji-matrice-4t/android
 cp local.properties.example local.properties    # isi sdk.dir, flutter.sdk, DJI_API_KEY
 cd .. && flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk
@@ -76,11 +76,11 @@ Nama dan tanda tangan API DJI dicocokkan dengan sampel resmi \code{Mobile-SDK-An
 \begin{itemize}
 \item Autel Smart Controller V3, EVO II V3.
 \item App key dari Autel Developer untuk paket \code{com.\allowbreak{}darmawanrobotics.\allowbreak{}autelgcsbridge}.
-\item SDK \code{autel-sdk-release.\allowbreak{}aar} (v1.5) di \code{android/\allowbreak{}app/\allowbreak{}libs/\allowbreak{}}.
+\item SDK \code{autel-sdk-release.\allowbreak{}aar} (v1.5) dari Autel Developer, disalin ke \code{android/\allowbreak{}app/\allowbreak{}libs/\allowbreak{}}. Berkas ini tidak disimpan di repositori.
 \end{itemize}
 \subsection{Build}
 \begin{lstlisting}
-cd bridges/autel/android
+cd bridges/autel-evo2-v3/android
 cp local.properties.example local.properties    # isi sdk.dir, flutter.sdk, AUTEL_APP_KEY
 cd .. && flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk

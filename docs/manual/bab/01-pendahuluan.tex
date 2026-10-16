@@ -8,17 +8,19 @@ Seluruh antarmuka operator berbahasa Indonesia. Seluruh sistem berjalan di serve
 \noindent\begin{tabularx}{\linewidth}{@{}>{\bfseries}l X@{}}
 \toprule
 Komponen & Fungsi \\ \midrule
-Konsol (\code{app/}) & Aplikasi operator Next.js, berjalan di browser dan sebagai aplikasi desktop Tauri. \\
-\code{gcs-api} & Server FastAPI: autentikasi, registri drone dan kamera, endpoint bridge, perintah dan misi, simulator drone demo, perekaman penerbangan, tanya-jawab visual (VLM), speech-to-text. \\
-\code{gcs-worker} & Proses inferensi: beberapa model YOLO per stream, hitungan grup, caption Moondream, video beranotasi. \\
+Konsol (\code{fe/}) & Aplikasi operator Next.js, berjalan di browser dan sebagai aplikasi desktop Tauri. \\
+\code{gcs-api} (\code{be/}) & Server FastAPI: autentikasi, registri drone dan kamera, endpoint bridge, perintah dan misi, simulator drone demo, perekaman penerbangan, tanya-jawab visual (VLM), speech-to-text. \\
+\code{gcs-worker} (\code{be/}) & Proses inferensi: beberapa model YOLO per stream, hitungan grup, caption Moondream, video beranotasi. \\
 MediaMTX & Server media: menerima RTMP/RTSP/SRT dan menyajikan WebRTC/HLS. \\
 NATS & Bus pesan antara API dan worker. \\
 PostgreSQL + TimescaleDB & Penyimpanan data, kejadian, audit, dan jejak terbang. \\
 Ollama & Model bahasa-visual lokal (Moondream, penerjemah). \\
-Bridge DJI & Aplikasi Android di remote DJI untuk Matrice 4T (MSDK v5.17). \\
-Bridge Autel & Aplikasi Android di Smart Controller V3 untuk EVO II V3 (Autel SDK v1.5). \\
+Bridge DJI (\code{bridges/\allowbreak{}dji-\allowbreak{}matrice-\allowbreak{}4t/}) & Aplikasi Android di remote DJI untuk Matrice 4T (MSDK v5.17). \\
+Bridge Autel (\code{bridges/\allowbreak{}autel-\allowbreak{}evo2-\allowbreak{}v3/}) & Aplikasi Android di Smart Controller V3 untuk EVO II V3 (Autel SDK v1.5). \\
 \bottomrule
 \end{tabularx}
+
+Kode sumber ada di organisasi GitHub \code{DarmawanWeb}. Repositori utama \code{Pasupasastra} (infrastruktur dan dokumen) memuat konsol \code{pasupasastra-\allowbreak{}gcs-\allowbreak{}fe}, server \code{pasupasastra-\allowbreak{}gcs-\allowbreak{}be}, dan \code{PasupasastraBridge} sebagai \emph{submodule}. \code{PasupasastraBridge} memuat satu submodule per model drone: \code{pasupasastra-\allowbreak{}bridge-\allowbreak{}dji-\allowbreak{}matrice-\allowbreak{}4t} dan \code{pasupasastra-\allowbreak{}bridge-\allowbreak{}autel-\allowbreak{}evo2-\allowbreak{}v3}.
 
 \section{Istilah}
 \begin{description}[leftmargin=3.2cm,style=nextline]
