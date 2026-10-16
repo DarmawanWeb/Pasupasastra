@@ -1,0 +1,6 @@
+.env
+data/models/*
+!data/models/.gitkeep
+output/
+backup*.sql
+.DS_Store
