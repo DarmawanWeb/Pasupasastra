@@ -1,5 +1,5 @@
 # Single origin for the console: static app + API + WebSocket + video signalling.
-# NEXT_PUBLIC_API_URL=https://<host>/api when building the app for this setup.
+# The console is built with NEXT_PUBLIC_API_URL=http(s)://<host>:8081/api (scripts/deploy.sh).
 :8081 {
 	encode zstd gzip
 

@@ -17,4 +17,4 @@ ollama pull moondream
 ollama pull llama3.2:3b   # caption / answer translation to Bahasa Indonesia
 
 mkdir -p data/models
-echo "Done. Next: cp .env.example .env, edit it, docker compose up -d --build, pm2 start pm2/ecosystem.config.cjs"
+echo "Done. Next: cp .env.example .env, edit it, then scripts/deploy.sh"

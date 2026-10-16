@@ -2,6 +2,7 @@
 #   docker compose up -d                 -> MediaMTX, TimescaleDB, NATS, API, web (Caddy)
 #   docker compose --profile gpu up -d   -> + inference worker and Ollama on an NVIDIA host
 # On macOS the worker and Ollama run natively (CoreML / Metal), see pm2/ecosystem.config.cjs.
+# The console is a static export: build fe/ first (scripts/deploy.sh does it).
 name: pasupasastra
 
 services:
@@ -44,6 +45,7 @@ services:
       - "127.0.0.1:4222:4222"   # native worker on the same host
 
   api:
+    image: ${REGISTRY:-ghcr.io/darmawanweb}/pasupasastra-api:${TAG:-main}
     build: ./be
     restart: unless-stopped
     env_file: .env
