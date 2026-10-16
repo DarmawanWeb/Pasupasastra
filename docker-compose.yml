@@ -44,7 +44,7 @@ services:
       - "127.0.0.1:4222:4222"   # native worker on the same host
 
   api:
-    build: ../backend
+    build: ./be
     restart: unless-stopped
     env_file: .env
     environment:
@@ -74,8 +74,8 @@ services:
     image: caddy:2-alpine
     restart: unless-stopped
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ../app/out:/srv/app:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./fe/out:/srv/app:ro
     ports:
       - "8081:8081"
     depends_on: [api]
@@ -83,7 +83,7 @@ services:
   worker:
     profiles: ["gpu"]
     build:
-      context: ../backend
+      context: ./be
       dockerfile: Dockerfile.worker
     restart: unless-stopped
     environment:
