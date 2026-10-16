@@ -1,8 +1,8 @@
-# PASUPATASTRA GCS stack.
+# PASUPASASTRA GCS stack.
 #   docker compose up -d                 -> MediaMTX, TimescaleDB, NATS, API, web (Caddy)
 #   docker compose --profile gpu up -d   -> + inference worker and Ollama on an NVIDIA host
 # On macOS the worker and Ollama run natively (CoreML / Metal), see pm2/ecosystem.config.cjs.
-name: pasupatastra
+name: pasupasastra
 
 services:
   mediamtx:

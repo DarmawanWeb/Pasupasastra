@@ -1,4 +1,4 @@
-# PASUPATASTRA — Unified Command Center For Multi-drone Operations
+# PASUPASASTRA — Unified Command Center For Multi-drone Operations
 
 | Folder | Isi |
 |---|---|
@@ -9,4 +9,4 @@
 | `infra/` | Docker Compose, MediaMTX, Caddy, PM2, skrip setup Mac |
 | `docs/` | Manual pengguna (PDF + sumber LaTeX), protokol bridge, hasil benchmark |
 
-Mulai dari `docs/PASUPATASTRA-Manual-Pengguna.pdf`. Build ulang manual: `cd docs/manual && latexmk -xelatex manual.tex`.
+Mulai dari `docs/PASUPASASTRA-Manual-Pengguna.pdf`. Build ulang manual: `cd docs/manual && latexmk -xelatex manual.tex`.

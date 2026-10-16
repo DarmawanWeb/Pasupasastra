@@ -1,4 +1,4 @@
-# MediaMTX for PASUPATASTRA. Drones / phones publish RTMP to rtmp://<server>/<path>,
+# MediaMTX for PASUPASASTRA. Drones / phones publish RTMP to rtmp://<server>/<path>,
 # operators watch WebRTC (WHEP) or HLS, the worker reads RTSP and publishes ai/<path>.
 logLevel: info
 
