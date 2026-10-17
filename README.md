@@ -203,6 +203,28 @@ get their own bridge in [PasupasastraBridge](https://github.com/DarmawanWeb/Pasu
 | 1935 | RTMP in | 8888 | HLS |
 | 8890/udp | SRT in | | |
 
+Every published port is a variable in `.env` (`GCS_CONSOLE_PORT`, `GCS_API_PORT`, `GCS_RTMP_PORT`,
+`GCS_RTSP_PORT`, `GCS_WEBRTC_PORT`, `GCS_WEBRTC_UDP_PORT`, `GCS_HLS_PORT`, `GCS_SRT_PORT`, and the
+loopback-only `GCS_DB_PORT`, `GCS_NATS_PORT`, `GCS_OLLAMA_PORT`).
+
+<details>
+<summary><b>Running next to NETRA, Molly and other stacks on one host</b></summary>
+
+Compose projects, networks and volumes are already separate (`pasupasastra_*`), so only host ports
+can collide. NETRA takes 80 and 443 (or 8088 behind a tunnel), PM2 dashboards usually 3000–3099, and a
+host TimescaleDB 5432; PASUPASASTRA keeps its database and NATS on loopback 15432 and 14222. On a
+shared Mac mini where 8080 is taken, for example:
+
+```dotenv
+GCS_CONSOLE_PORT=8091
+GCS_API_PORT=8092
+```
+
+then point the bridges at `ws://<LAN_IP>:8092/...` and the tunnel at `http://localhost:8091`.
+`scripts/deploy.sh` checks every port before the first start and stops with the ones that are taken.
+
+</details>
+
 ## Performance
 
 Measured with [`be/tests/bench.py`](https://github.com/DarmawanWeb/pasupasastra-gcs-be/blob/main/tests/bench.py)
